@@ -1,17 +1,17 @@
 # Shunting yard fuzzing report
 
-- Generated: 2026-10-16 00:26:47
+- Generated: 2026-10-17 10:02:45
 - Platform: `darwin` (executable suffix `(none)`)
-- **MD5 of all C++ files: `f1afa60792e78e244c3200fb1363a87a`** (5 files)
+- **MD5 of all C++ files: `21f8ccedcf2ed94e4f4b415cde26f428`** (5 files)
 - Executable: `main`
-- Executable MD5: `8455c921fb3e7857068dc1f61487f1be` (84568 bytes)
+- Executable MD5: `b1759a2f2d80b9fb03224ad718bfe914` (84600 bytes)
 - Compiled with: `/usr/bin/g++ -std=c++11 -g /Users/alexsho/Documents/05_PROJECTS/LETI/АиСд/Л1/main.cpp /Users/alexsho/Documents/05_PROJECTS/LETI/АиСд/Л1/list.cpp -o /Users/alexsho/Documents/05_PROJECTS/LETI/АиСд/Л1/main`
 - Reference: Python oracle implementing the same algorithm (tokens `+ - * / ^ sin cos ( ) 0-9`, space separated)
-- Random seed: `7` (re-run with `--seed 7` to reproduce)
+- Random seed: `20261012` (re-run with `--seed 20261012` to reproduce)
 - Fuzz runs requested: 1000 (max nesting depth 3, parentheses: mixed)
 - Every generated expression is well-formed: the generator parses its own output back with the reference grammar and refuses to continue when the parentheses do not match the tree
 - Per-run timeout: 5s
-- Duration: 4.14s
+- Duration: 3.08s
 
 ## Verdict
 
@@ -23,15 +23,15 @@
 | 10 default bound examples | 10 |
 | Rejection (error handling) tests | 3 |
 | Random fuzz runs | 1000 |
-| - minimal parentheses | 466 |
-| - fully parenthesised | 534 |
+| - minimal parentheses | 462 |
+| - fully parenthesised | 538 |
 | Errors found | **0** |
 | Fuzz-stage errors | 0 |
 | Pass rate | 100.00% |
 
 ## C++ files hashed (MD5)
 
-Aggregate MD5 of all C++ files: **`f1afa60792e78e244c3200fb1363a87a`**
+Aggregate MD5 of all C++ files: **`21f8ccedcf2ed94e4f4b415cde26f428`**
 
 | File | Size (bytes) | MD5 |
 | --- | --- | --- |
@@ -39,11 +39,11 @@ Aggregate MD5 of all C++ files: **`f1afa60792e78e244c3200fb1363a87a`**
 | `DynamicArray.h` | 1512 | `0c4dc59101414f14be2f7cab238fbd50` |
 | `Stack.h` | 395 | `22aa7012c148da05bbf62d321ee4768e` |
 | `list.cpp` | 1403 | `8c6553b7bc4a232f0ae464f03fca09e4` |
-| `main.cpp` | 5952 | `c2d184f68bb71b0804d60d4a5a7422c9` |
+| `main.cpp` | 6265 | `f8b7134c22f57c563027b06acd6b220d` |
 
 | Artifact | Size (bytes) | MD5 |
 | --- | --- | --- |
-| `main` (executable) | 84568 | `8455c921fb3e7857068dc1f61487f1be` |
+| `main` (executable) | 84600 | `b1759a2f2d80b9fb03224ad718bfe914` |
 
 ## Default bound test examples
 

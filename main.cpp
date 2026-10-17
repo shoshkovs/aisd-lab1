@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <iostream>
 #include <string>
 #include "DynamicArray.h"
@@ -24,7 +25,7 @@ int priority(std::string op) {
     return 0;
 }
 
-bool isRightAssoc(std::string op) {
+bool groupsRightToLeft(std::string op) {
     return op == "^";
 }
 
@@ -69,16 +70,16 @@ bool tokenize(std::string input, DynamicArray& tokens) {
         }
 
         if (isLetter(ch)) {
-            std::string name = "";
+            std::string functionName = "";
             while (i < (int)input.size() && isLetter(input[i])) {
-                name += toLowerChar(input[i]);
+                functionName += toLowerChar(input[i]);
                 i++;
             }
-            if (!isFunction(name)) {
-                std::cerr << "Ошибка: неизвестное имя " << name << std::endl;
+            if (!isFunction(functionName)) {
+                std::cerr << "Ошибка: неизвестная функция " << functionName << std::endl;
                 return false;
             }
-            tokens.pushBack(name);
+            tokens.pushBack(functionName);
             continue;
         }
 
@@ -88,63 +89,63 @@ bool tokenize(std::string input, DynamicArray& tokens) {
     return true;
 }
 
-bool shuntingYard(DynamicArray& tokens, DynamicArray& output) {
+bool convertToReversePolishNotation(DynamicArray& tokens, DynamicArray& output) {
     Stack stack;
 
-    bool expectOperand = true;
-    bool afterFunction = false;
+    bool expectingValue = true;
+    bool expectingOpeningParenAfterFunction = false;
 
     for (int i = 0; i < tokens.size(); i++) {
         std::string token = tokens.get(i);
 
-        if (afterFunction) {
+        if (expectingOpeningParenAfterFunction) {
             if (token != "(") {
                 std::cerr << "Ошибка: после функции должна быть '('" << std::endl;
                 return false;
             }
-            afterFunction = false;
+            expectingOpeningParenAfterFunction = false;
         }
 
         if (isNumber(token)) {
-            if (!expectOperand) {
+            if (!expectingValue) {
                 std::cerr << "Ошибка: неожиданное число " << token << std::endl;
                 return false;
             }
             output.pushBack(token);
-            expectOperand = false;
+            expectingValue = false;
         }
         else if (isFunction(token)) {
-            if (!expectOperand) {
+            if (!expectingValue) {
                 std::cerr << "Ошибка: неожиданная функция " << token << std::endl;
                 return false;
             }
             stack.push(token);
-            afterFunction = true;
+            expectingOpeningParenAfterFunction = true;
         }
         else if (isOperator(token)) {
-            if (expectOperand) {
+            if (expectingValue) {
                 std::cerr << "Ошибка: неожиданный оператор " << token << std::endl;
                 return false;
             }
             while (!stack.empty()
                    && isOperator(stack.top())
                    && (priority(stack.top()) > priority(token)
-                       || (priority(stack.top()) == priority(token) && !isRightAssoc(token)))) {
+                       || (priority(stack.top()) == priority(token) && !groupsRightToLeft(token)))) {
                 output.pushBack(stack.pop());
             }
             stack.push(token);
-            expectOperand = true;
+            expectingValue = true;
         }
         else if (token == "(") {
-            if (!expectOperand) {
+            if (!expectingValue) {
                 std::cerr << "Ошибка: неожиданная '('" << std::endl;
                 return false;
             }
             stack.push(token);
-            expectOperand = true;
+            expectingValue = true;
         }
         else if (token == ")") {
-            if (expectOperand) {
+            if (expectingValue) {
                 std::cerr << "Ошибка: неожиданная ')'" << std::endl;
                 return false;
             }
@@ -159,11 +160,11 @@ bool shuntingYard(DynamicArray& tokens, DynamicArray& output) {
             if (!stack.empty() && isFunction(stack.top())) {
                 output.pushBack(stack.pop());
             }
-            expectOperand = false;
+            expectingValue = false;
         }
     }
 
-    if (expectOperand) {
+    if (expectingValue) {
         std::cerr << "Ошибка: выражение не завершено" << std::endl;
         return false;
     }
@@ -180,6 +181,7 @@ bool shuntingYard(DynamicArray& tokens, DynamicArray& output) {
 }
 
 int main() {
+    constexpr int EXIT_FAIL = 1;
     std::cout << "Введите выражение (пустая строка — выход):" << std::endl;
 
     std::string line;
@@ -187,20 +189,20 @@ int main() {
         if (line.empty()) break;
 
         DynamicArray tokens;
-        if (!tokenize(line, tokens)) return 1;
+        if (!tokenize(line, tokens)) return EXIT_FAIL;
 
-        DynamicArray rpn;
-        if (!shuntingYard(tokens, rpn)) return 1;
+        DynamicArray resultTokens;
+        if (!convertToReversePolishNotation(tokens, resultTokens)) return EXIT_FAIL;
 
         std::cout << line << "\n\n";
-        for (int i = 0; i < rpn.size(); i++) {
-            std::cout << rpn.get(i);
-            if (i + 1 < rpn.size()) {
+        for (int i = 0; i < resultTokens.size(); i++) {
+            std::cout << resultTokens.get(i);
+            if (i + 1 < resultTokens.size()) {
                 std::cout << ", ";
             }
         }
         std::cout << std::endl;
     }
 
-    return 0;
+    return EXIT_SUCCESS;
 }
